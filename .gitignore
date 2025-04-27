@@ -1,0 +1,57 @@
+# Build results
+bin/
+obj/
+
+# Rider specific
+.idea/
+*.sln.iml
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# DotCover
+.idea/.idea.DotSettings
+.idea/.idea.DotSettings.user
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+package-lock.json
+.nuget/
+# Optional: if you have local NuGet packages
+*.nupkg
+*.snupkg
+
+# Visual Studio Code Workspace settings
+.vscode/
+
+# Rider caches
+.idea/.cache/
+.idea/.gradle/
+
+# Temp folders
+TestResults/
+.vs/
+_ReSharper*/
+**/ReSharperHost/
+
+# Publish output
+publish/

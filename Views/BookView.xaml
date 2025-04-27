@@ -48,15 +48,14 @@
                     CornerRadius="8">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsEditMode}" Value="False"/>
-                                    <Condition Binding="{Binding IsAddMode}" Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsAddMode}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
@@ -98,20 +97,19 @@
             <Border Background="White" 
             CornerRadius="8" 
             Padding="20">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsEditMode, FallbackValue=False}" Value="True"/>
-                                <Condition Binding="{Binding IsAddMode, FallbackValue=False}" Value="True"/>
-                            </MultiDataTrigger.Conditions>
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </MultiDataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsAddMode}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000"/>
                 </Border.Effect>

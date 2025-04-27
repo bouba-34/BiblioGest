@@ -120,6 +120,9 @@ namespace BiblioGest.ViewModels
         private void LoadCategories()
         {
             var categoriesList = _context.Categories.ToList();
+            // Add "All Categories" option at the beginning
+            var allCategories = new Category { Id = 0, Name = "All Categories" };
+            categoriesList.Insert(0, allCategories);
             Categories = new ObservableCollection<Category>(categoriesList);
         }
 
@@ -159,7 +162,7 @@ namespace BiblioGest.ViewModels
             }
             
             // Filter by category
-            if (SelectedCategoryId.HasValue)
+            if (SelectedCategoryId.HasValue && SelectedCategoryId.Value > 0)
             {
                 query = query.Where(b => b.CategoryId == SelectedCategoryId.Value);
             }

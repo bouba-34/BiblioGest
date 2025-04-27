@@ -92,11 +92,7 @@
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="Id"
                                       SelectedValue="{Binding SelectedCategoryId}"
-                                      Margin="0,0,0,0">
-                                <ComboBox.Items>
-                                    <ComboBoxItem Content="All Categories" IsSelected="True"/>
-                                </ComboBox.Items>
-                            </ComboBox>
+                                      Margin="0,0,0,0" />
                         </StackPanel>
                         
                         <!-- Year Range -->

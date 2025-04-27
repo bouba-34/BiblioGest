@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="BiblioGest.Views.BookView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BiblioGest.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="800">
+    
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <local:BooleanToStringConverter x:Key="BooleanToStringConverter"/>
+    </UserControl.Resources>
+    
+    <Grid Background="#F5F5F5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="20,20,20,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="Book Management" Style="{StaticResource PageTitle}"/>
+            
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBox Width="250" 
+                         Margin="0,0,10,0" 
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalContentAlignment="Center"/>
+                         
+                <Button Content="Add New Book" 
+                        Style="{StaticResource DefaultButton}"
+                        Command="{Binding AddBookCommand}"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Content -->
+        <Grid Grid.Row="1" Margin="20">
+            <!-- DataGrid View (when not in edit/add mode) -->
+            <Border Background="White" 
+                    CornerRadius="8">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEditMode}" Value="False"/>
+                                    <Condition Binding="{Binding IsAddMode}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000"/>
+                </Border.Effect>
+                
+                <DataGrid ItemsSource="{Binding Books}"
+                          SelectedItem="{Binding SelectedBook}"
+                          Style="{StaticResource DataGridStyle}"
+                          Margin="1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="120"/>
+                        <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                        <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="*"/>
+                        <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="*"/>
+                        <DataGridTextColumn Header="Year" Binding="{Binding PublicationYear}" Width="80"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="120"/>
+                        <DataGridTextColumn Header="Available" Binding="{Binding CopiesAvailable}" Width="80"/>
+                        <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Style="{StaticResource IconButton}" 
+                                                Command="{Binding DataContext.DeleteBookCommand, 
+                                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}">
+                                            <TextBlock Text="🗑️" FontSize="16"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            
+            <!-- Edit/Add Form -->
+            <Border Background="White" 
+            CornerRadius="8" 
+            Padding="20">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEditMode, FallbackValue=False}" Value="True"/>
+                                <Condition Binding="{Binding IsAddMode, FallbackValue=False}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000"/>
+                </Border.Effect>
+                
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" 
+                               Text="{Binding IsAddMode, Converter={StaticResource BooleanToStringConverter}, 
+                                    ConverterParameter='Add New Book;Edit Book'}"
+                               Style="{StaticResource SectionTitle}"/>
+                    
+                    <Grid Grid.Row="1" Margin="0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- ISBN -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,10">
+                            <TextBlock Text="ISBN" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewBook.ISBN}"/>
+                        </StackPanel>
+                        
+                        <!-- Title -->
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,10">
+                            <TextBlock Text="Title" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewBook.Title}"/>
+                        </StackPanel>
+                        
+                        <!-- Author -->
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,10,10,10">
+                            <TextBlock Text="Author" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewBook.Author}"/>
+                        </StackPanel>
+                        
+                        <!-- Publisher -->
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,10,0,10">
+                            <TextBlock Text="Publisher" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewBook.Publisher}"/>
+                        </StackPanel>
+                        
+                        <!-- Publication Year -->
+                        <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,10,10,10">
+                            <TextBlock Text="Publication Year" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewBook.PublicationYear}"/>
+                        </StackPanel>
+                        
+                        <!-- Category -->
+                        <StackPanel Grid.Row="2" Grid.Column="1" Margin="10,10,0,10">
+                            <TextBlock Text="Category" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding Categories}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      SelectedValue="{Binding NewBook.CategoryId}"/>
+                        </StackPanel>
+                        
+                        <!-- Copies Available -->
+                        <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,10,10,10">
+                            <TextBlock Text="Copies Available" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewBook.CopiesAvailable}"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancel" 
+                                Style="{StaticResource DefaultButton}"
+                                Background="Gray"
+                                Command="{Binding CancelEditCommand}"
+                                Margin="0,0,10,0"/>
+                                
+                        <Button Content="Save" 
+                                Style="{StaticResource DefaultButton}"
+                                Command="{Binding SaveBookCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,266 @@
+﻿<UserControl x:Class="BiblioGest.Views.SearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BiblioGest.Views"
+             xmlns:biblioGest="clr-namespace:BiblioGest"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:BooleanToStringConverter x:Key="BooleanToStringConverter"/>
+        <local:BooleanToColorConverter x:Key="BooleanToColorConverter"/>
+    </UserControl.Resources>
+    
+    <Grid Background="#F5F5F5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <TextBlock Grid.Row="0" 
+                   Text="Advanced Search" 
+                   Style="{StaticResource PageTitle}"
+                   Margin="20,20,20,0"/>
+        
+        <!-- Search Form -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="8" 
+                Margin="20,0,20,10"
+                Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000"/>
+            </Border.Effect>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Search Text -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,15">
+                    <TextBlock Text="Search Term" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             biblioGest:PlaceholderTextExtension.PlaceholderText="Enter search term..."
+                             Height="35"
+                             VerticalContentAlignment="Center"/>
+                </StackPanel>
+                
+                <!-- Search Options -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Search Options" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                    
+                    <CheckBox Content="Search Books" 
+                              IsChecked="{Binding SearchBooks}"
+                              Margin="0,5,0,0"/>
+                              
+                    <CheckBox Content="Search Members" 
+                              IsChecked="{Binding SearchMembers}"
+                              Margin="0,5,0,0"/>
+                </StackPanel>
+                
+                <!-- Book-specific Filters -->
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,0"
+                            Visibility="{Binding SearchBooks, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Book Filters" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Category Filter -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,5,5,0">
+                            <TextBlock Text="Category" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding Categories}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      SelectedValue="{Binding SelectedCategoryId}"
+                                      Margin="0,0,0,0">
+                                <ComboBox.Items>
+                                    <ComboBoxItem Content="All Categories" IsSelected="True"/>
+                                </ComboBox.Items>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <!-- Year Range -->
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,5,0,0">
+                            <TextBlock Text="Publication Year" Margin="0,0,0,5"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBox Grid.Column="0" 
+                                         Text="{Binding StartYear}" 
+                                         VerticalContentAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="to" Margin="5,0" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="2" 
+                                         Text="{Binding EndYear}" 
+                                         VerticalContentAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                
+                <!-- Search Buttons -->
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                    <Button Content="Clear" 
+                            Style="{StaticResource DefaultButton}"
+                            Background="Gray"
+                            Command="{Binding ClearCommand}"
+                            Margin="0,0,10,0"/>
+                            
+                    <Button Content="Search" 
+                            Style="{StaticResource DefaultButton}"
+                            Command="{Binding SearchCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Results Tabs -->
+        <TabControl Grid.Row="2" 
+                    Margin="20,0,20,20" 
+                    BorderThickness="0" 
+                    Background="Transparent">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Border" 
+                                        BorderThickness="0,0,0,2" 
+                                        BorderBrush="Transparent"
+                                        Margin="0,0,20,0">
+                                    <ContentPresenter x:Name="ContentSite"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      ContentSource="Header"
+                                                      Margin="10,5"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            
+            <!-- Book Results Tab -->
+            <TabItem Header="Books" 
+                     Visibility="{Binding SearchBooks, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Border Background="White" 
+                        CornerRadius="8" 
+                        Margin="0,10,0,0">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000"/>
+                    </Border.Effect>
+                    
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <DataGrid Grid.Row="0" 
+                                  ItemsSource="{Binding BookResults}"
+                                  SelectedItem="{Binding SelectedBook}"
+                                  Style="{StaticResource DataGridStyle}"
+                                  Margin="1">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="120"/>
+                                <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                                <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="*"/>
+                                <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="*"/>
+                                <DataGridTextColumn Header="Year" Binding="{Binding PublicationYear}" Width="80"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="120"/>
+                                <DataGridTextColumn Header="Available" Binding="{Binding CopiesAvailable}" Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <Button Grid.Row="1" 
+                                Content="Export Results" 
+                                HorizontalAlignment="Right"
+                                Margin="0,10,10,10"
+                                Command="{Binding ExportResultsCommand}"
+                                Style="{StaticResource DefaultButton}"/>
+                    </Grid>
+                </Border>
+            </TabItem>
+            
+            <!-- Member Results Tab -->
+            <TabItem Header="Members" 
+                     Visibility="{Binding SearchMembers, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Border Background="White" 
+                        CornerRadius="8" 
+                        Margin="0,10,0,0">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000"/>
+                    </Border.Effect>
+                    
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <DataGrid Grid.Row="0" 
+                                  ItemsSource="{Binding MemberResults}"
+                                  SelectedItem="{Binding SelectedMember}"
+                                  Style="{StaticResource DataGridStyle}"
+                                  Margin="1">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                                <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*"/>
+                                <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="*"/>
+                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="120"/>
+                                <DataGridTextColumn Header="Registration Date" Binding="{Binding RegistrationDate, StringFormat={}{0:yyyy-MM-dd}}" Width="120"/>
+                                <DataGridTemplateColumn Header="Status" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding IsActive, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Active;Inactive'}"
+                                                      Foreground="{Binding IsActive, Converter={StaticResource BooleanToColorConverter}, ConverterParameter='Green;Red'}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <Button Grid.Row="1" 
+                                Content="Export Results" 
+                                HorizontalAlignment="Right"
+                                Margin="0,10,10,10"
+                                Command="{Binding ExportResultsCommand}"
+                                Style="{StaticResource DefaultButton}"/>
+                    </Grid>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

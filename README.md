@@ -158,3 +158,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ### Processing a Loan
 
 ![Processing a Loan](screenshots/add_loan.png)
+
+## 📧 Contact
+
+For questions, support, or contributions, please contact:
+
+- **Name**: Boubacar Sangare, Badr Benabdellah
+- **GitHub**: [Bouba](https://github.com/bouba-34), [Badr](https://github.com/badrbenabdellah)
